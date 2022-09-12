@@ -23,6 +23,7 @@ int counter;
 int selection;
 String number_state;
 int number_state_counter;
+PImage img;
 
 
 void setup() {
@@ -40,6 +41,7 @@ void setup() {
   counter = 0;
   selection = 0;
   number_state_counter = 0;
+  img = loadImage("keypad.jpeg");
 } // End of setup()
 
 
@@ -47,6 +49,8 @@ void setup() {
 void draw() {
   counter++;
   background(BG_COLOR);
+  
+  image(img, 0, 0, width*1.3, height*1.3);
   
   drawKeypad();
   //println(state);
