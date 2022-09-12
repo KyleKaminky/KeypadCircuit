@@ -171,7 +171,7 @@ void draw() {
   fill(255);
   if (selection != 0) {
     
-    String s = "Number Pressed: " + OPTIONS[selection];
+    String s = "Button Pressed: " + OPTIONS[selection];
     text(s, width/2, GAP/2);
   }
   
@@ -195,6 +195,7 @@ void drawKeypad() {
     int x = GAP + (width)/4*i;
     stroke(COLUMN_COLOR);
     line(x, GAP*2, x, height - GAP*1.5);
+    text("C" + i, x, height-GAP*1.5+textAscent());
     for (int j = 0; j < 4; j++){
       int y = GAP*2 + height/5*j;
       stroke(ROW_COLOR);
@@ -203,7 +204,7 @@ void drawKeypad() {
       
       stroke(COLUMN_COLOR);
       line(x - size/2, y, x, y);
-      text(OPTIONS[j*3 + i], x-100, y);
+      text(OPTIONS[j*3 + i], x-90, y-textAscent()/2);
       
       drawConnectionPiece(x-size, y, size, ROW_COLOR, COLUMN_COLOR);
     }
