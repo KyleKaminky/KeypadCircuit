@@ -7,6 +7,7 @@
 
 
 // Global Constants
+final int FR = 60; // (fr/sec)
 final int BG_COLOR = #1D1D1D;//#2F2F2F;//#34344A;
 final int COLUMN_COLOR = #80475E;
 final int ROW_COLOR = #339989;//#CC5A71;
@@ -16,7 +17,9 @@ final int TITLE_COLOR = #FFFAFB;
 final String[] OPTIONS = {" ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"};
 final int VOLTAGE_SPEED = 10;
 final int TITLE_SIZE = 60;
-
+final int OPENING_DELAY = 1; // (sec)
+final int CONNECTION_DELAY = 1; //(sec)
+final int DRAW_DELAY = 3; //(sec)
 final int GAP = 100;
 
 // Global Variables
@@ -32,7 +35,7 @@ int column, row;
 
 
 void setup() {
-  //frameRate(5);
+  frameRate(FR);
   size(1080, 1080);
   pixelDensity(displayDensity());
   
@@ -62,8 +65,7 @@ void draw() {
   
   switch (number_state) {
     case "none":
-      //selection = 0;
-      if (number_state_counter < 60) {
+      if (number_state_counter < FR*OPENING_DELAY) {
         number_state_counter++;  
       } else{
         number_state = "select";
@@ -75,27 +77,21 @@ void draw() {
       selection = int(random(1,12));
       column = (selection-1) % 3 + 1;
       row = (selection-1) / 3;
-      //selection = (selection + 1)%13;
-      println("NEW SELECTION " + str(selection));
       v_x = GAP*1.5;
-      v_y = GAP*2 + height/5*((selection-1)/3)-45;
-      number_state = "wait";
-      
+      v_y = GAP*2 + height/5*(row)-45;
+      number_state = "draw";
       break;
       
-    case "wait":
+    case "draw":
       number_state_counter++;
       int x_threshold = GAP + width/4*(column)-30;
       int x_threshold_2 = x_threshold + 30;
       float y_threshold_2 = height-GAP*1.5;
       float y_threshold = GAP*2 + height/5*(row);
-      //float temp_x = (v_x < x_threshold) ? x_threshold : x_threshold_2;
-      //float temp_y = (v_y < y_threshold) ? y_threshold : y_threshold_2;
 
-      
-      //println(temp_x);
-      //println(temp_y);
-      if (number_state_counter > 60){
+      drawConnection(GAP+ (width/4)*(column) - 35, GAP*2+height/5*(row) - 5, CONNECTION_COLOR);
+
+      if (number_state_counter > CONNECTION_DELAY*FR){
         if (v_x < x_threshold){
           v_x += VOLTAGE_SPEED;
         } else if (v_y < y_threshold) {
@@ -108,48 +104,30 @@ void draw() {
         drawVoltage(v_x, v_y, VOLTAGE_COLOR);
       }
       
-      println(v_y + " " + y_threshold_2);
       if (v_y >= y_threshold_2) {
         draw_delay++;
-        if (draw_delay < 200) {
+        if (draw_delay < DRAW_DELAY*FR) {
           textSize(TITLE_SIZE);
           fill(TITLE_COLOR);
-          text("R" + str(row+1) + ", " + "C" + str(column) + " = " + OPTIONS[selection], width/2, height-textAscent());
+          String footer = "R" + str(row+1) + ", " + "C" + str(column) + " = " + OPTIONS[selection];
+          text(footer, width/2, height-textAscent());
         } else {
-          //state = "moving_voltage";
-          println("Moving to none");
           number_state = "none";
           selection = 0;
           number_state_counter = 0;
           draw_delay = 0;
-          
-          //delay(1000);
         }
       }
-      
-      
-      //v_x = (v_x < temp_x && v_y == temp_y) ? v_x+5 : v_x;
-      //v_y = (v_x == temp_x && v_y < temp_y) ? v_y + 5 : v_y;
-      //println(x_threshold + " " + x_threshold_2);
-      //println(y_threshold + " " + y_threshold_2);
-      //println("----");
-      
       break;
     
   }
+  
   fill(TITLE_COLOR);
   textAlign(LEFT, CENTER);
   textSize(TITLE_SIZE);
   String s = "Button Pressed: " + OPTIONS[selection];
   text(s, width/2 - textWidth("Button Pressed:  ")/2, GAP/2+10);
   textAlign(CENTER, CENTER);
-
-  
-  if (selection != 0){
-    drawConnection(GAP+ (width/4)*((selection-1)%3 + 1) - 35, GAP*2+height/5*((selection-1)/3) - 5, CONNECTION_COLOR);
-    //delay(1000);
-  }
-  
 
 
 } // End of draw()
@@ -185,7 +163,8 @@ void drawKeypad() {
      
   }
  
-}
+} // End of drawKeypad()
+
 
 void drawConnectionPiece(float x, float y, float s, int r, int c){
   stroke(r);
@@ -196,20 +175,19 @@ void drawConnectionPiece(float x, float y, float s, int r, int c){
   line(x-s/2, y-s/2, x+s/2, y-s/2);
   line(x-s/2, y+s/2, x+s/2, y+s/2);
   line(x+s/2, y-s/2, x+s/2, y+s/2);
-}
+} // End of drawConnectionPiece()
+
 
 void drawConnection(float x, float y, int c) {
   noStroke();
   rectMode(CENTER);
   fill(c, 200);
   rect(x, y, 60, 60);
-  //draw square over connection
-  
-}
+} // End of drawConnection()
+
 
 void drawVoltage(float x, float y, int c) {
   noStroke();
   fill(c);
   circle(x, y, 30);
-  
-}
+} // End of drawVoltage()
