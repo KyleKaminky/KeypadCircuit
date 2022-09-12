@@ -7,11 +7,12 @@
 
 
 // Global Constants
-final int BG_COLOR = #34344A;
+final int BG_COLOR = #1D1D1D;//#2F2F2F;//#34344A;
 final int COLUMN_COLOR = #80475E;
-final int ROW_COLOR = #CC5A71;
-final int CONNECTION_COLOR = #C89B7B; 
-final int VOLTAGE_COLOR = #F0F757;
+final int ROW_COLOR = #339989;//#CC5A71;
+final int CONNECTION_COLOR = #FFFAFB; 
+final int VOLTAGE_COLOR = #C589E8;//#7DE2D1;//#F0F757;
+final int TITLE_COLOR = #FFFAFB;
 final String[] OPTIONS = {" ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"};
 final int VOLTAGE_SPEED = 10;
 final int TITLE_SIZE = 60;
@@ -112,6 +113,7 @@ void draw() {
         draw_delay++;
         if (draw_delay < 200) {
           textSize(TITLE_SIZE);
+          fill(TITLE_COLOR);
           text("R" + str(row+1) + ", " + "C" + str(column) + " = " + OPTIONS[selection], width/2, height-textAscent());
         } else {
           //state = "moving_voltage";
@@ -135,7 +137,7 @@ void draw() {
       break;
     
   }
-  fill(255);
+  fill(TITLE_COLOR);
   textAlign(LEFT, CENTER);
   textSize(TITLE_SIZE);
   String s = "Button Pressed: " + OPTIONS[selection];
@@ -153,7 +155,7 @@ void draw() {
 } // End of draw()
 
 void drawKeypad() {
-  fill(255);
+  fill(TITLE_COLOR);
   textSize(30);
   float size = 30;
   strokeWeight(4);
