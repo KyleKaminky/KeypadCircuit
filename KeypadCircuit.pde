@@ -12,7 +12,9 @@ final int COLUMN_COLOR = #80475E;
 final int ROW_COLOR = #CC5A71;
 final int CONNECTION_COLOR = #C89B7B; 
 final int VOLTAGE_COLOR = #F0F757;
-final String[] OPTIONS = {"", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"};
+final String[] OPTIONS = {" ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"};
+final int VOLTAGE_SPEED = 10;
+final int TITLE_SIZE = 60;
 
 final int GAP = 100;
 
@@ -23,7 +25,9 @@ int counter;
 int selection;
 String number_state;
 int number_state_counter;
+int draw_delay;
 PImage img;
+int column, row;
 
 
 void setup() {
@@ -41,6 +45,7 @@ void setup() {
   counter = 0;
   selection = 0;
   number_state_counter = 0;
+  draw_delay = 0;
   img = loadImage("keypad.jpeg");
 } // End of setup()
 
@@ -50,64 +55,9 @@ void draw() {
   counter++;
   background(BG_COLOR);
   
-  image(img, 0, 0, width*1.3, height*1.3);
+  //image(img, 0, 0, width*1.3, height*1.3);
   
   drawKeypad();
-  //println(state);
-  //switch (state) {
-  //  case "moving_voltage":
-  //    v_x = GAP*1.5;
-  //    int c = (counter/60) % 4;
-  //    println("C: " + str(c));
-  //    v_y = c*height/5+ 2*GAP - 45;
-  //    println("Selection % 3: " + str(selection % 3));
-  //    if (c+1 == selection % 3) {
-  //      state = "selection";
-  //    }
-  //    break;
-      
-  //  case "selection":
-  //    float x_threshold = GAP + width/4*(selection%3) - 30;
-  //    float x_threshold_2 = x_threshold + 30;
-  //    float y_threshold_2 = height-GAP*1.5;
-  //    float y_threshold = GAP*2 + height/5*(selection/3);
-  //    //float temp_x = (v_x < x_threshold) ? x_threshold : x_threshold_2;
-  //    //float temp_y = (v_y < y_threshold) ? y_threshold : y_threshold_2;
-
-      
-  //    //println(temp_x);
-  //    //println(temp_y);
-      
-  //    if (v_x < x_threshold){
-  //      v_x += 5;
-  //    } else if (v_y < y_threshold) {
-  //      v_y += 5;
-  //    } else if (v_x < x_threshold_2) {
-  //      v_x += 5;
-  //    } else if (v_y < y_threshold_2) {
-  //     v_y += 5; 
-  //    } else if (v_y == y_threshold_2) {
-  //      state = "moving_voltage";
-  //      number_state = "none";
-  //      number_state_counter = 0;
-  //      delay(1000);
-  //    }
-      
-  //    //v_x = (v_x < temp_x && v_y == temp_y) ? v_x+5 : v_x;
-  //    //v_y = (v_x == temp_x && v_y < temp_y) ? v_y + 5 : v_y;
-  //    println(x_threshold + " " + x_threshold_2);
-  //    println(y_threshold + " " + y_threshold_2);
-  //    println("----");
-  //    break;
-      
-      
-  //  case "reset":
-  //    state = "moving_voltage";
-      
-  //    break;
-  //}
-
-  
   
   switch (number_state) {
     case "none":
@@ -122,6 +72,8 @@ void draw() {
       
     case "select":
       selection = int(random(1,12));
+      column = (selection-1) % 3 + 1;
+      row = (selection-1) / 3;
       //selection = (selection + 1)%13;
       println("NEW SELECTION " + str(selection));
       v_x = GAP*1.5;
@@ -131,35 +83,46 @@ void draw() {
       break;
       
     case "wait":
-    
-      float x_threshold = GAP + width/4*((selection-1)%3 + 1) - 30;
-      float x_threshold_2 = x_threshold + 30;
+      number_state_counter++;
+      int x_threshold = GAP + width/4*(column)-30;
+      int x_threshold_2 = x_threshold + 30;
       float y_threshold_2 = height-GAP*1.5;
-      float y_threshold = GAP*2 + height/5*((selection-1)/3);
+      float y_threshold = GAP*2 + height/5*(row);
       //float temp_x = (v_x < x_threshold) ? x_threshold : x_threshold_2;
       //float temp_y = (v_y < y_threshold) ? y_threshold : y_threshold_2;
 
       
       //println(temp_x);
       //println(temp_y);
+      if (number_state_counter > 60){
+        if (v_x < x_threshold){
+          v_x += VOLTAGE_SPEED;
+        } else if (v_y < y_threshold) {
+          v_y += VOLTAGE_SPEED;
+        } else if (v_x < x_threshold_2) {
+          v_x += VOLTAGE_SPEED;
+        } else if (v_y < y_threshold_2) {
+         v_y += VOLTAGE_SPEED; 
+        } 
+        drawVoltage(v_x, v_y, VOLTAGE_COLOR);
+      }
       
-      if (v_x < x_threshold){
-        v_x += 5;
-      } else if (v_y < y_threshold) {
-        v_y += 5;
-      } else if (v_x < x_threshold_2) {
-        v_x += 5;
-      } else if (v_y < y_threshold_2) {
-       v_y += 5; 
-      } 
-      drawVoltage(v_x, v_y, VOLTAGE_COLOR);
       println(v_y + " " + y_threshold_2);
       if (v_y >= y_threshold_2) {
-        //state = "moving_voltage";
-        println("Moving to none");
-        number_state = "none";
-        number_state_counter = 0;
-        delay(1000);
+        draw_delay++;
+        if (draw_delay < 200) {
+          textSize(TITLE_SIZE);
+          text("R" + str(row+1) + ", " + "C" + str(column) + " = " + OPTIONS[selection], width/2, height-textAscent());
+        } else {
+          //state = "moving_voltage";
+          println("Moving to none");
+          number_state = "none";
+          selection = 0;
+          number_state_counter = 0;
+          draw_delay = 0;
+          
+          //delay(1000);
+        }
       }
       
       
@@ -173,11 +136,12 @@ void draw() {
     
   }
   fill(255);
-  if (selection != 0) {
-    
-    String s = "Button Pressed: " + OPTIONS[selection];
-    text(s, width/2, GAP/2);
-  }
+  textAlign(LEFT, CENTER);
+  textSize(TITLE_SIZE);
+  String s = "Button Pressed: " + OPTIONS[selection];
+  text(s, width/2 - textWidth("Button Pressed:  ")/2, GAP/2+10);
+  textAlign(CENTER, CENTER);
+
   
   if (selection != 0){
     drawConnection(GAP+ (width/4)*((selection-1)%3 + 1) - 35, GAP*2+height/5*((selection-1)/3) - 5, CONNECTION_COLOR);
@@ -199,15 +163,19 @@ void drawKeypad() {
     int x = GAP + (width)/4*i;
     stroke(COLUMN_COLOR);
     line(x, GAP*2, x, height - GAP*1.5);
-    text("C" + i, x, height-GAP*1.5+textAscent());
+    text("C" + i, x, height-GAP*1.5+textAscent()*1.2);
     for (int j = 0; j < 4; j++){
+      
       int y = GAP*2 + height/5*j;
+      if (i == 1){
+        text("R" + (j+1), x - width/4.0, y - 45);
+      }
       stroke(ROW_COLOR);
       line(GAP*1.5, y-size*1.5, width-GAP*2, y-size*1.5);
       line(x-size, y-size*1.5, x-size, y-size);
       
       stroke(COLUMN_COLOR);
-      line(x - size/2, y, x, y);
+      line(x - size/2.0, y, x, y);
       text(OPTIONS[j*3 + i], x-90, y-textAscent()/2);
       
       drawConnectionPiece(x-size, y, size, ROW_COLOR, COLUMN_COLOR);
