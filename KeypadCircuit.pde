@@ -32,6 +32,7 @@ int number_state_counter;
 int draw_delay;
 PImage img;
 int column, row;
+IntList buttons = new IntList(); 
 
 
 void setup() {
@@ -51,6 +52,11 @@ void setup() {
   number_state_counter = 0;
   draw_delay = 0;
   img = loadImage("keypad.jpeg");
+  
+  for (int i = 1; i < OPTIONS.length; i++) {
+    buttons.append(i);
+  }
+  buttons.shuffle();
 } // End of setup()
 
 
@@ -74,7 +80,7 @@ void draw() {
       break;
       
     case "select":
-      selection = int(random(1,12));
+      selection = buttons.remove(0);
       column = (selection-1) % 3 + 1;
       row = (selection-1) / 3;
       v_x = GAP*1.5;
@@ -119,6 +125,7 @@ void draw() {
         }
       }
       break;
+      
     
   }
   
@@ -128,7 +135,10 @@ void draw() {
   String s = "Button Pressed: " + OPTIONS[selection];
   text(s, width/2 - textWidth("Button Pressed:  ")/2, GAP/2+10);
   textAlign(CENTER, CENTER);
-
+  
+  if (buttons.size() == 0) {
+    noLoop();
+  }
 
 } // End of draw()
 
