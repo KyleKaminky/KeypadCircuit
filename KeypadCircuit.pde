@@ -1,18 +1,21 @@
 /*
                            KEYPAD CIRCUIT
                            ----------------
-   Description
+   This sketch shows a conceptual circuit for a typical keypad. It shows
+   a random button being selected and then models the current flowing from
+   the corresponding row to column. The unique combination of these is how
+   the system determines which button was pressed.
    
 */
 
 
 // Global Constants
 final int FR = 60; // (fr/sec)
-final int BG_COLOR = #1D1D1D;//#2F2F2F;//#34344A;
+final int BG_COLOR = #1D1D1D;
 final int COLUMN_COLOR = #80475E;
-final int ROW_COLOR = #339989;//#CC5A71;
+final int ROW_COLOR = #339989;
 final int CONNECTION_COLOR = #FFFAFB; 
-final int VOLTAGE_COLOR = #C589E8;//#7DE2D1;//#F0F757;
+final int VOLTAGE_COLOR = #C589E8;
 final int TITLE_COLOR = #FFFAFB;
 final String[] OPTIONS = {" ", "1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"};
 final int VOLTAGE_SPEED = 10;
@@ -64,8 +67,6 @@ void setup() {
 void draw() {
   counter++;
   background(BG_COLOR);
-  
-  //image(img, 0, 0, width*1.3, height*1.3);
   
   drawKeypad();
   
@@ -125,8 +126,6 @@ void draw() {
         }
       }
       break;
-      
-    
   }
   
   fill(TITLE_COLOR);
@@ -147,7 +146,6 @@ void drawKeypad() {
   textSize(30);
   float size = 30;
   strokeWeight(4);
-  //stroke(KEYPAD_COLOR);
   
   for (int i = 1; i < 4; i++){
     int x = GAP + (width)/4*i;
